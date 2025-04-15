@@ -3,14 +3,20 @@ const {
     createSlug,
     avarage,
     isPalindrome,
-    findPostById
+    findPostById,
+    addPost,
+    removePost
 } = require("./snacks.js");
 
-const posts = [
-    { id: 1, titolo: "Introduzione a JavaScript", slug: "introduzione-a-javascript" },
-    { id: 2, titolo: "Cos'è il DOM", slug: "cos-e-il-dom" },
-    { id: 3, titolo: "Guida a React", slug: "guida-a-react" }
-];
+let posts;
+beforeEach(() => {
+    posts = [
+        { id: 1, titolo: "Introduzione a JavaScript", slug: "introduzione-a-javascript" },
+        { id: 2, titolo: "Cos'è il DOM", slug: "cos-e-il-dom" },
+        { id: 3, titolo: "Guida a React", slug: "guida-a-react" }
+    ];
+})
+
 
 describe("Manipolazione di stringhe", () => {
     // Snack 1
@@ -28,7 +34,6 @@ describe("Manipolazione di stringhe", () => {
 
 
 describe("Manipolazione di array", () => {
-
     // Snack 3
     test("La funzione average calcola la media aritmetica di un array di numeri.", () => {
         expect(avarage([5, 15])).toBe(10);
@@ -40,7 +45,26 @@ describe("Manipolazione di array", () => {
         expect(findPostById(posts, 99)).toBe(null);
         expect(() => findPostById(posts, "ciao")).toThrow("Id non valido");
     });
+
+    // Snack 8 - BONUS
+    test("Dopo aver aggiunto un post con la funzione addPost, l\'array posts deve contenere un elemento in più", () => {
+        addPost(posts, { id: 4, titolo: "Nuovo Post", slug: "nuovo-post" });
+        expect(posts).toHaveLength(4);
+    });
+
+    test("Dopo aver rimosso un post con la funzione removePost, l'array posts deve contenere un elemento in meno.", () => {
+        removePost(posts, 2);
+        expect(posts).toHaveLength(2);
+    });
+
+    // Snack 9 - BONUS
+    test("Se si tenta di aggiungere un post con un id o uno slug già esistente, la funzione addPost deve lanciare un errore.", () => {
+        expect(() => addPost(posts, { id: 2, titolo: "Post Duplicato", slug: "post-duplicato" })).toThrow("Id già esistente");
+        expect(() => addPost(posts, { id: 5, titolo: "Guida a React", slug: "guida-a-react" })).toThrow("Slug già esistente");
+    });
+
 });
+
 
 describe("Generazione di slug", () => {
     // Snack 2
@@ -57,5 +81,10 @@ describe("Generazione di slug", () => {
     test("La funzione createSlug lancia un errore se il titolo è vuoto o non valido.", () => {
         expect(() => createSlug("")).toThrow("Titolo non valido");
         expect(() => createSlug(null)).toThrow("Titolo non valido");
+    });
+
+    // Snack 10 - BONUS
+    test("Se viene passato un array di post come secondo argomento, la funzione createSlug incrementa di 1 se lo slug esiste già.", () => {
+        expect(createSlug("Guida a React", posts)).toBe("guida-a-react-1");
     });
 });
